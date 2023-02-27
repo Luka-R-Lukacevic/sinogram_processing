@@ -1,3 +1,4 @@
+import numpy as np
 from ct_object import CT_Object
 
 

@@ -153,14 +153,17 @@ class CT_Object ():
     #plot the image
     def plot(self):
         plt.imshow(self.image)
+        plt.show()
     
     #plot the sinogram
     def plot_sin(self):
         plt.imshow(self.sinogram)
+        plt.show()
     
     #plot the reconstructed image
     def plot_rec(self):
         plt.imshow(self.recon)
+        plt.show()
             
     #add noise/pertubation to the sinogram
     def pert_sin(self,mu,sig2):
