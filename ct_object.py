@@ -4,22 +4,15 @@ import matplotlib.pyplot as plt
 
 
 from numpy.random import normal
-import math
-from scipy.optimize import curve_fit
-from scipy.interpolate import RectBivariateSpline
-from skimage import io
-from skimage.data import shepp_logan_phantom
-from skimage.transform import radon, rescale, rotate, iradon
+from skimage.transform import radon, iradon
 
 from curve_fitting import fit_curve
 
 
 from helper_functions import highest_non_zero_index
+from helper_functions import lowest_non_zero_index
 from helper_functions import wasserstein_distance
 from helper_functions import shift_array
-from helper_functions import find_cusps
-from helper_functions import find_middle_values
-from helper_functions import split_array
 
 
 angle_frequency = 2 
@@ -43,99 +36,21 @@ class CT_Object ():
         
         #Now let's define the upper shape function of a circle
         
-        self.sin_up = np.zeros(len(theta))
-        self.poly_up = np.zeros(len(theta))
+        self.curve_up = np.zeros(len(theta))
+        self.update_curve_up()
+        self.curve_down = np.zeros(len(theta))
+        self.update_curve_down()
         
-    def update_sin_up(self):    
+    def update_curve_up(self):    
         for thet in theta:
             thet = int(angle_frequency*thet)
-            self.sin_up[thet] = highest_non_zero_index(self.sinogram[:,thet])
-        
-    def curve_up(self):
+            self.curve_up[thet] = highest_non_zero_index(self.sinogram[:,thet])
 
-        # Load the data from a file or generate it using some other method
-        x_data = range(len(theta))
-        y_data = self.sin_up
-
-        # Define the sin curve function
-        def sin_curve(X, a, b, c, d):
-            x=X
-            return a * np.sin(b * x + c) + d
-
-        # Fit the curve to the data
-        params = curve_fit(sin_curve, x_data, y_data, [30,1/100,200,100]) 
-
-
-        # Get the fitted curve
-        fitted_curve = sin_curve(x_data, params[0][0], params[0][1], params[0][2], params[0][3])
-
-
-        # plot it
-        #plt.plot(fitted_curve)
-        #plt.plot(self.sin_up)
-
-        #plt.ylim(0,200)
-        # Show the plot
-        #plt.show()
-        return fitted_curve
-        
-
-    def fit_poly_up(self):
-
+    def update_curve_down(self):    
         for thet in theta:
-            thet = int(2*thet)
-            self.poly_up[thet] = highest_non_zero_index(self.sinogram[:,thet])
-        
-        
-        x_data = range(len(theta))
-        # Get the fitted curve
-        params = np.polyfit(x_data, self.poly_up, deg=10)
-        fitted_curve = np.polyval(params, x_data)
+            thet = int(angle_frequency*thet)
+            self.curve_down[thet] = lowest_non_zero_index(self.sinogram[:,thet])
 
-        
-        cusps = find_cusps(fitted_curve,1)
-        middle_values = find_middle_values(cusps)
-        middle_values = [x for x in middle_values if x > 10]
-        middle_values = [x for x in middle_values if x < len(theta) - 15]
-        multiple_curves_y = split_array(self.poly_up, middle_values)
-        multiple_curves_x = split_array(x_data, middle_values)
-        
-        new_curve = []
-        
-        for i in range(0,len(middle_values)):
-            # Get the fitted curve for the current subarray
-            params = np.polyfit(multiple_curves_x[i], multiple_curves_y[i], deg=2)
-            new_curve = np.append(new_curve,np.polyval(params, multiple_curves_x[i]))
-
-        #for i in range(80,100):
-            #print(new_curve[i],i)
-        
-        for m in middle_values:
-            # Check if m+1 is within the bounds of the array
-            if m+1 < len(new_curve):
-                d = new_curve[m-1] - new_curve[m]
-                h = new_curve[m-1] - new_curve[m-2]
-                d+=3*h
-                #print("hiphuraaay",d, m)
-            for i in range(m,len(new_curve)):
-                # Check if i is within the bounds of the array
-                if i < len(new_curve):
-                    new_curve[i] += d
-
-            
-            
-        #plot it
-        plt.plot(fitted_curve)
-        plt.plot(self.poly_up)
-        plt.plot(new_curve)
-
-        plt.ylim(0,300)
-        # Show the plot
-        plt.show()
-        #for i in range(80,100):
-            #print(new_curve[i], i)
-        return new_curve        
-        
         
     #add a circle or ellipse to the bare image
     def add_circ_im(self,x,y,r,f,a=1,b=1):
@@ -150,8 +65,9 @@ class CT_Object ():
             element = int(element)
         
         #update
-        self.update_sin_up()
-    
+        self.update_curve_up()
+        self.update_curve_down()
+        
     #plot the image
     def plot(self):
         plt.imshow(self.image)
@@ -192,19 +108,40 @@ class CT_Object ():
             element = int(element)
         
         #update
-        self.update_sin_up() 
+        self.update_curve_up()
+        self.update_curve_down()
 
 
     
     
     #recover the sinogram
-    def rec_sin(self, func="sin"):
-        a = fit_curve(self.sin_up,func)
+    def rec_sin(self, func = "sin", reconstruction_type = "up"):
+        a = np.zeros(len(theta))
         b = np.zeros(len(theta))
-        for t in theta:
-            b[int(2*t)] = highest_non_zero_index(self.sinogram[:,int(2*t)])
-        c = a-b
+        if reconstruction_type == "up":
+            a = fit_curve(self.curve_up,func)
+            for t in theta:
+                b[int(2*t)] = highest_non_zero_index(self.sinogram[:,int(2*t)])
+        
+        if reconstruction_type == "down":
+            a = fit_curve(self.curve_down,func)
+            for t in theta:
+                b[int(2*t)] = lowest_non_zero_index(self.sinogram[:,int(2*t)])
+
+        if reconstruction_type == "both":
+            a = fit_curve(self.curve_up,func)
+            c = fit_curve(self.curve_down,func)
+            d = np.zeros(len(theta))
+            for t in theta:
+                b[int(2*t)] = highest_non_zero_index(self.sinogram[:,int(2*t)])
+                d[int(2*t)] = lowest_non_zero_index(self.sinogram[:,int(2*t)])
+            a = a + c
+            a = a * (0.5)
+            b = b + d
+            b = b * (0.5)
+
+        e = a-b
         
         for thet in theta:
-            self.sinogram[:,int(2*thet)] = shift_array(self.sinogram[:,int(2*thet)], round(c[int(2*thet)]))
+            self.sinogram[:,int(2*thet)] = shift_array(self.sinogram[:,int(2*thet)], round(e[int(2*thet)]))
         self.recon = iradon(self.sinogram, theta=theta, filter_name='ramp')

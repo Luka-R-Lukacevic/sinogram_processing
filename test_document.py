@@ -2,6 +2,9 @@ import numpy as np
 from ct_object import CT_Object
 
 
+
+
+
 circle = CT_Object(np.zeros([128,128]))
 circle.add_circ_im(0.2,0.2,0.25,1)
 circle.plot_sin()
@@ -30,7 +33,7 @@ rec.plot_sin()
 rec.pert_sin(0,5)
 rec.plot_sin()
 rec.plot_rec()
-rec.rec_sin("poly")
+rec.rec_sin("poly", "both")
 rec.plot_sin()
 rec.plot_rec()
 
@@ -43,6 +46,6 @@ twocircles.plot_sin()
 twocircles.pert_sin(0,5)
 twocircles.plot_sin()
 twocircles.plot_rec()
-twocircles.rec_sin("poly")
+twocircles.rec_sin("poly", "both")
 twocircles.plot_sin()
 twocircles.plot_rec()

@@ -10,6 +10,15 @@ def highest_non_zero_index(arr):
         l -= 1
     return l
 
+def lowest_non_zero_index(arr):
+  # Find the highest index in the array that is non-zero
+    k = 0
+    while k < len(arr):
+        if arr[k] != 0:
+            return k
+        k += 1
+    return k
+
 
 def wasserstein_distance(hist1, hist2):
   # Normalize histograms

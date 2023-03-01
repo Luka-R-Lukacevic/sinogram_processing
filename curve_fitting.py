@@ -83,7 +83,7 @@ def fit_curve(y_data, func= "sin"):
         plt.plot(y_data)
         plt.plot(new_curve)
 
-        plt.ylim(0,300)
+        plt.ylim(0,400)
         # Show the plot
         plt.show()
         #for i in range(80,100):
