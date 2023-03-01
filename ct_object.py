@@ -11,6 +11,8 @@ from skimage import io
 from skimage.data import shepp_logan_phantom
 from skimage.transform import radon, rescale, rotate, iradon
 
+from curve_fitting import fit_curve
+
 
 from helper_functions import highest_non_zero_index
 from helper_functions import wasserstein_distance
@@ -113,7 +115,7 @@ class CT_Object ():
             if m+1 < len(new_curve):
                 d = new_curve[m-1] - new_curve[m]
                 h = new_curve[m-1] - new_curve[m-2]
-                d+=h
+                d+=3*h
                 #print("hiphuraaay",d, m)
             for i in range(m,len(new_curve)):
                 # Check if i is within the bounds of the array
@@ -196,8 +198,8 @@ class CT_Object ():
     
     
     #recover the sinogram
-    def rec_sin(self):
-        a = self.curve_up()
+    def rec_sin(self, func="sin"):
+        a = fit_curve(self.sin_up,func)
         b = np.zeros(len(theta))
         for t in theta:
             b[int(2*t)] = highest_non_zero_index(self.sinogram[:,int(2*t)])

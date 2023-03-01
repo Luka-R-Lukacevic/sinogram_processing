@@ -79,6 +79,8 @@ def split_array(array, split_points):
     split_arrays = []
     start = 0
     for end in split_points:
+        end = int(round(end))
+        #print(end)
         split_arrays.append(array[start:end])
         start = end
  
