@@ -94,3 +94,9 @@ def split_array(array, split_points):
         start = end
  
     return split_arrays
+
+
+def center(array):
+    overall_sum = sum(array)
+    center = sum([w * x for w, x in zip(array, range(len(array)))])
+    return center/overall_sum

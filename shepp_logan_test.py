@@ -15,12 +15,12 @@ phantom.plot()
 
 phantom.plot_sin()
 
-phantom.pert_sin(0,3)
+phantom.pert_sin(0,10)
 phantom.plot_sin()
 
 phantom.plot_rec()
 
-phantom.rec_sin("sin")
+phantom.rec_sin("polynomial", "orthogonal")
 phantom.plot_rec()
 
 phantom.plot_sin()

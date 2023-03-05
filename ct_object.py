@@ -13,7 +13,7 @@ from helper_functions import highest_non_zero_index
 from helper_functions import lowest_non_zero_index
 from helper_functions import wasserstein_distance
 from helper_functions import shift_array
-
+from helper_functions import center
 
 angle_frequency = 2 
 theta = np.arange(0., 180., 1/angle_frequency)
@@ -40,6 +40,8 @@ class CT_Object ():
         self.update_curve_up()
         self.curve_down = np.zeros(len(theta))
         self.update_curve_down()
+        self.curve_center = np.zeros(len(theta))
+        self.update_curve_center()
         
     def update_curve_up(self):    
         for thet in theta:
@@ -50,6 +52,11 @@ class CT_Object ():
         for thet in theta:
             thet = int(angle_frequency*thet)
             self.curve_down[thet] = lowest_non_zero_index(self.sinogram[:,thet])
+    
+    def update_curve_center(self):    
+        for thet in theta:
+            thet = int(angle_frequency*thet)
+            self.curve_center[thet] = center(self.sinogram[:,thet])
 
         
     #add a circle or ellipse to the bare image
@@ -67,6 +74,7 @@ class CT_Object ():
         #update
         self.update_curve_up()
         self.update_curve_down()
+        self.update_curve_center()
         
     #plot the image
     def plot(self):
@@ -110,6 +118,7 @@ class CT_Object ():
         #update
         self.update_curve_up()
         self.update_curve_down()
+        self.update_curve_center()
 
 
     
@@ -139,7 +148,10 @@ class CT_Object ():
             a = a * (0.5)
             b = b + d
             b = b * (0.5)
-
+        if reconstruction_type == "orthogonal":
+            a = fit_curve(self.curve_center,func)
+            for t in theta:
+                b[int(2*t)] = center(self.sinogram[:,int(2*t)])
         e = a-b
         
         for thet in theta:

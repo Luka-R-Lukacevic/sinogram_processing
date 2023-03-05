@@ -10,14 +10,15 @@ circle.add_circ_im(0.2,0.2,0.25,1)
 circle.plot_sin()
 
 
-circle.pert_sin(0,3)
+circle.pert_sin(0,6)
+circle.plot()
 circle.plot_sin()
 
 
 circle.plot_rec()
 
 
-circle.rec_sin()
+circle.rec_sin("sin","orthogonal")
 circle.plot_rec()
 
 
@@ -30,10 +31,10 @@ rec.add_rec_im(0,0,5,0.3,0.5)
 rec.plot()
 
 rec.plot_sin()
-rec.pert_sin(0,5)
+rec.pert_sin(0,15)
 rec.plot_sin()
 rec.plot_rec()
-rec.rec_sin("poly", "both")
+rec.rec_sin("poly", "orthogonal")
 rec.plot_sin()
 rec.plot_rec()
 
@@ -46,6 +47,9 @@ twocircles.plot_sin()
 twocircles.pert_sin(0,5)
 twocircles.plot_sin()
 twocircles.plot_rec()
-twocircles.rec_sin("poly", "both")
+twocircles.rec_sin("poly", "orthogonal")
 twocircles.plot_sin()
 twocircles.plot_rec()
+
+
+
