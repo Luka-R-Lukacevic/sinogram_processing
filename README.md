@@ -1,8 +1,8 @@
-#CT Object Reconstruction and Processing
+# CT Object Reconstruction and Processing
 
 This project contains a set of Python scripts for creating a CT (Computed Tomography) Object, reconstructing images and applying various processing techniques. The code provided here allows to simulate a CT object, add shapes to the image, generate sinograms, perform image reconstructions, and process the resulting images.
 
-##Contents:
+## Contents:
 
 1. Prerequisites
 2. Files Description
@@ -10,7 +10,7 @@ This project contains a set of Python scripts for creating a CT (Computed Tomogr
 4. Examples
 
 
-##Prerequisites:
+## Prerequisites:
 
 Before running the code, make sure you have the following dependencies installed:
 
@@ -25,7 +25,7 @@ You can install the required dependencies using the following command:
 
 pip install numpy matplotlib scikit-image scipy ot
 
-##Files Description:
+## Files Description:
 
 The project consists of the following files:
 
@@ -46,7 +46,7 @@ Calculates MSE and EMD values featured in the tables for the circle.
 
 These scripts are part of the CT Object Reconstruction and Processing bachelors thesis and are used to demonstrate various image reconstruction and processing techniques. Each script contains code to perform specific tasks related to the thesis.
 
-##Usage:
+## Usage:
 
 To use this project, follow these steps:
 
