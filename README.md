@@ -19,11 +19,10 @@ Before running the code, make sure you have the following dependencies installed
 - matplotlib
 - skimage
 - scipy
-- ot
 
 You can install the required dependencies using the following command:
 
-pip install numpy matplotlib scikit-image scipy ot
+pip install numpy matplotlib scikit-image scipy
 
 ## Files Description:
 

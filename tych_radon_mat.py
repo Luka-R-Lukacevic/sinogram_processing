@@ -62,12 +62,8 @@ def lamda_max_function(lamda, theta, image_shape, sinogram):
     matrix = (1/lamda) * sparse_H.T @ sparse_H + np.eye(image_shape[0] * image_shape[1])
     sparse_matrix = sp.csr_matrix(matrix)
     eigvals = spla.eigsh(sparse_matrix, k=200, which='LM', return_eigenvectors=False, tol=25)
-    #print(eigvals)
     det = np.log(eigvals)
-    #det = np.linalg.det(matrix)
-    #print("det:", det)
     third_term = np.sum(det)
-    #print(f"({first_term}) + ({second_term}) + ({third_term})")
     return first_term + second_term + third_term, x
 
 
